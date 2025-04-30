@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    password: springstudent
+    username: springstudent
+    url: jdbc:mysql://localhost:3306/modern_bank_atm_reporting
+  jpa:
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: none
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+  application:
+    name: atm-reporting-service
+  main:
+    banner-mode: off

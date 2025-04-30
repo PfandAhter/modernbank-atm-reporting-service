@@ -7,6 +7,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
+
+
+/**
+ * ATM entity class representing an ATM machine.
+ * This class is used to store information about ATMs in the database.
+ */
 @Entity
 @Table(name = "atm")
 @Getter
@@ -36,6 +45,14 @@ public class ATM {
 
     @Column(name = "address")
     private String address;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "atm_banks",
+            joinColumns = @JoinColumn(name = "atm_id"),
+            inverseJoinColumns = @JoinColumn(name = "bank_id")
+    )
+    private Set<Bank> supportedBanks = new HashSet<>();
 
     @Column(name = "status")
     private ATMStatus status;
