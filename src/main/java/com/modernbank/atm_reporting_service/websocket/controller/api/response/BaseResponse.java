@@ -26,8 +26,8 @@ public class BaseResponse {
     @JsonProperty("ProcessMessage")
     private String processMessage = ResponseStatus.PROCESS_SUCCESS;
 
-    /*public BaseResponse(String processMessage){
+    public BaseResponse(String processMessage){
         this.processCode = ResponseStatus.PROCESS_SUCCESS;
         this.processMessage = processMessage;
-    }*/
+    }
 }

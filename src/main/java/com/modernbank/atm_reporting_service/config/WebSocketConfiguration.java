@@ -22,5 +22,4 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                 .setAllowedOriginPatterns("*") // For Cors
                 .withSockJS();
     }
-
 }

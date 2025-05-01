@@ -4,8 +4,7 @@ import com.modernbank.atm_reporting_service.model.enums.ATMDepositStatus;
 import com.modernbank.atm_reporting_service.model.enums.ATMStatus;
 import com.modernbank.atm_reporting_service.model.enums.ATMWithdrawStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +19,9 @@ import java.util.Set;
 @Table(name = "atm")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 public class ATM {
 

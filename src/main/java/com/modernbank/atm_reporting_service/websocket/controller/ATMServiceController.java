@@ -1,7 +1,9 @@
 package com.modernbank.atm_reporting_service.websocket.controller;
 
 import com.modernbank.atm_reporting_service.websocket.controller.api.IATMServiceApi;
+import com.modernbank.atm_reporting_service.websocket.controller.api.request.BaseRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.response.ATMStatusUpdateResponse;
+import com.modernbank.atm_reporting_service.websocket.controller.api.response.BaseResponse;
 import com.modernbank.atm_reporting_service.websocket.service.interfaces.IATMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,13 @@ public class ATMServiceController implements IATMServiceApi {
 
     @Override
     public ResponseEntity<ATMStatusUpdateResponse> getATMStatusDetails(String atmId) {
-        atmService.createATMs();
         return ResponseEntity.ok(atmService.getATMStatusDetail(atmId));
     }
+
+    @Override
+    public ResponseEntity<BaseResponse> createATMReportPDF(String atmId) {
+        return atmService.;
+    }
+
 
 }

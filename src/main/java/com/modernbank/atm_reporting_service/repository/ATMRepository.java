@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface ATMRepository extends JpaRepository<ATM,String> {
 
     @Query("SELECT a FROM ATM a WHERE a.id = ?1")
-    Optional<ATM> getATMStatusDetailsByATMId(String atmId);
+    Optional<ATM> getATMByATMId(String atmId);
 
 }

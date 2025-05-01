@@ -1,11 +1,9 @@
 package com.modernbank.atm_reporting_service.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.modernbank.atm_reporting_service.model.enums.BankStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
 public class Bank {
 
@@ -26,7 +25,7 @@ public class Bank {
     @Column(name = "name")
     private String name;
 
-    private boolean isActive;
+    private BankStatus status;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "supportedBanks")
@@ -38,4 +37,9 @@ public class Bank {
     @Column(name = "last_update_date")
     private String lastUpdateDate;
 
+    @Column(name = "createdBy")
+    private String createdById;
+
+    @Column(name = "updatedBy")
+    private String updatedById;
 }
