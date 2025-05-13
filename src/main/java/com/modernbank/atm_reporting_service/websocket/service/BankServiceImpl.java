@@ -12,6 +12,9 @@ import com.modernbank.atm_reporting_service.websocket.service.interfaces.IBankSe
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.BANK_CREATION_FAILED;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.BANK_NOT_FOUND;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 
@@ -35,13 +38,13 @@ public class BankServiceImpl implements IBankService {
 
             return new BaseResponse("Bank Created Successfully");
         } catch (Exception e) {
-            throw new CreateFailedException("Bank Creation Failed");
+            throw new CreateFailedException(BANK_CREATION_FAILED);
         }
     }
 
     @Override
     public BaseResponse activateBank(UpdateBankRequest request) {
-        Bank bank = bankRepository.findById(request.getBankId()).orElseThrow(() -> new NotFoundException("Bank Not Found"));
+        Bank bank = bankRepository.findById(request.getBankId()).orElseThrow(() -> new NotFoundException(BANK_NOT_FOUND));
         bank.setStatus(request.getStatus());
         //bank.getUpdatedById();
         bankRepository.save(bank);
@@ -50,7 +53,7 @@ public class BankServiceImpl implements IBankService {
 
     @Override
     public BaseResponse updateBank(UpdateBankRequest request) {
-        Bank bank = bankRepository.findById(request.getBankId()).orElseThrow(() -> new NotFoundException("Bank Not Found"));
+        Bank bank = bankRepository.findById(request.getBankId()).orElseThrow(() -> new NotFoundException(BANK_NOT_FOUND));
         bank.setName(request.getName());
         bank.setStatus(request.getStatus());
         bank.setLastUpdateDate(LocalDate.now().toString());

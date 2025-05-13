@@ -4,4 +4,6 @@ public interface IHeaderService {
     String extractToken();
 
     String extractUserId();
+
+    String extractUserRole();
 }

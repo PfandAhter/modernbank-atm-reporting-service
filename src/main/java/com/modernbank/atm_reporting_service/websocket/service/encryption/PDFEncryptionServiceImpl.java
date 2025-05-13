@@ -18,6 +18,12 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.regex.Pattern;
 
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.ERROR_OCCURRED_WHILE_PDF_ENCRYPTION;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.SECURITY_ERROR_OCCURRED_WHILE_PDF_ENCRYPTION;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.INVALID_ENCRYPTED_DATA_FORMAT;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.ERROR_OCCURRED_WHILE_PDF_DECRYPTION;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.PDF_ENCRYPT_PASSWORD_NOT_VALID;
+
 @Service
 @Slf4j
 public class PDFEncryptionServiceImpl implements IPDFEncryptionService {
@@ -62,11 +68,11 @@ public class PDFEncryptionServiceImpl implements IPDFEncryptionService {
 
         } catch (GeneralSecurityException e) {
             log.error("Security error while encrypting PDF", e);
-            throw new EncryptionException("PDF şifreleme sırasında güvenlik hatası oluştu");
+            throw new EncryptionException(SECURITY_ERROR_OCCURRED_WHILE_PDF_ENCRYPTION);
 
         } catch (Exception e) {
             log.error("Unexpected error while encrypting PDF", e);
-            throw new EncryptionException("Beklenmeyen bir hata oluştu");
+            throw new EncryptionException(ERROR_OCCURRED_WHILE_PDF_ENCRYPTION);
         }
     }
 
@@ -79,7 +85,7 @@ public class PDFEncryptionServiceImpl implements IPDFEncryptionService {
             SecretKey key = deriveKey(password, salt);
 
             if(encryptedData.length < IV_LENGTH){
-                throw new EncryptionException("Invalid encrypted data format");
+                throw new EncryptionException(INVALID_ENCRYPTED_DATA_FORMAT);
             }
 
             ByteBuffer byteBuffer = ByteBuffer.wrap(encryptedData);
@@ -95,7 +101,7 @@ public class PDFEncryptionServiceImpl implements IPDFEncryptionService {
             return cipher.doFinal(encryptedContent);
         }catch (Exception e){
             log.error("Error while decrypting PDF", e);
-            throw new EncryptionException("Error while decrypting PDF");
+            throw new EncryptionException(ERROR_OCCURRED_WHILE_PDF_DECRYPTION);
         }
     }
 
@@ -131,10 +137,7 @@ public class PDFEncryptionServiceImpl implements IPDFEncryptionService {
 
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         if (!pattern.matcher(password).matches()) {
-            throw new EncryptionException(
-                    "Password must contain at least 8 characters, including uppercase, " +
-                            "lowercase, numbers and special characters"
-            );
+            throw new EncryptionException(PDF_ENCRYPT_PASSWORD_NOT_VALID);
         }
     }
 

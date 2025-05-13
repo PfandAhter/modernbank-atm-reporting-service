@@ -1,4 +1,4 @@
-package com.modernbank.atm_reporting_service.aop;
+package com.modernbank.atm_reporting_service.aspect;
 
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.BaseRequest;
 import com.modernbank.atm_reporting_service.websocket.service.interfaces.IHeaderService;
@@ -9,22 +9,22 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
-@Component
 @Slf4j
 @Aspect
+@Component
 @RequiredArgsConstructor
-
 public class BeforeControllerAspect {
 
     private final IHeaderService headerService;
 
-    @Before(value = "execution(* com.modernbank.atm_reporting_service.websocket.controller.ATMServiceController*(..))")
+    @Before(value = "execution(* com.modernbank.atm_reporting_service.websocket.controller.ATMServiceController.*(..))")
     public void setTokenBeforeController(JoinPoint joinPoint){
         Object[] parameters = joinPoint.getArgs();
         for(Object param : parameters){
             if(param instanceof BaseRequest baseRequest){
                 String token = headerService.extractToken();
                 String userId = headerService.extractUserId();
+                String userRole = headerService.extractUserRole();
                 baseRequest.setToken(token);
                 baseRequest.setUserId(userId);
             }

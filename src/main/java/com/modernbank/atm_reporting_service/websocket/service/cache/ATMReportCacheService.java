@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.PDF_GET_FAILED_OR_NOT_FOUND;
+
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +49,7 @@ public class ATMReportCacheService extends PDFCacheService{
             }
 
             Optional<EncryptedPDF> pdf = pdfRepository.findByRequestId(requestId);
-            pdf.orElseThrow(() -> new NotFoundException("PDF_GET_FAILED_OR_NOT_FOUND"));
+            pdf.orElseThrow(() -> new NotFoundException(PDF_GET_FAILED_OR_NOT_FOUND));
 
             if (pdf.isPresent()) {
                 return Optional.ofNullable(
