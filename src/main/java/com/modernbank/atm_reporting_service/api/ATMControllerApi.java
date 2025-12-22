@@ -1,6 +1,8 @@
-package com.modernbank.atm_reporting_service.websocket.controller.api;
+package com.modernbank.atm_reporting_service.api;
 
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.CreateATMRequest;
+import com.modernbank.atm_reporting_service.websocket.controller.api.request.GenerateRouteToATMRequest;
+import com.modernbank.atm_reporting_service.websocket.controller.api.request.GetNearestATMRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.UpdateATMRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.response.*;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public interface IATMControllerApi {
+public interface ATMControllerApi {
 
     @GetMapping(path = "/test/status")
     ResponseEntity<ATMStatusUpdateResponse> getATMStatusDetails(@RequestParam("id") String atmId);
@@ -32,4 +34,9 @@ public interface IATMControllerApi {
     @GetMapping(path = "/test/report")
     ResponseEntity<BaseResponse> createATMReportPDF(@RequestParam("id") String atmId);
 
+    @PostMapping(path = "/nearest")
+    NearestATMResponse nearestATM(@RequestBody GetNearestATMRequest request);
+
+    @PostMapping(path = "/route")
+    BaseResponse generateRouteToATM(@RequestBody GenerateRouteToATMRequest request);
 }

@@ -1,6 +1,6 @@
 package com.modernbank.atm_reporting_service.websocket.controller;
 
-import com.modernbank.atm_reporting_service.websocket.controller.api.IBankControllerApi;
+import com.modernbank.atm_reporting_service.api.BankControllerApi;
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.CreateBankRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.UpdateBankRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.response.BaseResponse;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 @RequestMapping(path = "/api/v1/bank")
-public class BankServiceController implements IBankControllerApi {
+public class BankServiceController implements BankControllerApi {
 
     private final IBankService bankService;
 

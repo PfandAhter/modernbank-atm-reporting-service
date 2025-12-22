@@ -1,7 +1,9 @@
 package com.modernbank.atm_reporting_service.websocket.controller;
 
-import com.modernbank.atm_reporting_service.websocket.controller.api.IATMControllerApi;
+import com.modernbank.atm_reporting_service.api.ATMControllerApi;
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.CreateATMRequest;
+import com.modernbank.atm_reporting_service.websocket.controller.api.request.GenerateRouteToATMRequest;
+import com.modernbank.atm_reporting_service.websocket.controller.api.request.GetNearestATMRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.UpdateATMRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.response.*;
 import com.modernbank.atm_reporting_service.websocket.service.interfaces.IATMService;
@@ -14,11 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 
 @RestController
-@CrossOrigin
 @RequestMapping(path = "/api/v1/atm")
 //@RequiredArgsConstructor
 
-public class ATMServiceController implements IATMControllerApi {
+public class ATMServiceController implements ATMControllerApi {
 
     private final IATMService atmService;
 
@@ -63,5 +64,16 @@ public class ATMServiceController implements IATMControllerApi {
     public ResponseEntity<BaseResponse> createATMReportPDF(String atmId) {
         generationFactory.generate("ATM_REPORT_INVOICE", new HashMap<>());
         return null;
+    }
+
+    @Override
+    public NearestATMResponse nearestATM(GetNearestATMRequest request) {
+        return atmService.getNearestATM(request);
+    }
+
+    @Override
+    public BaseResponse generateRouteToATM(GenerateRouteToATMRequest request) {
+        atmService.generateRouteToATM(request);
+        return new BaseResponse("Route generation initiated");
     }
 }

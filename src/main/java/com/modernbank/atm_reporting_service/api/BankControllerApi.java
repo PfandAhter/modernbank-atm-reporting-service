@@ -1,4 +1,4 @@
-package com.modernbank.atm_reporting_service.websocket.controller.api;
+package com.modernbank.atm_reporting_service.api;
 
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.CreateBankRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.UpdateBankRequest;
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-public interface IBankControllerApi {
+public interface BankControllerApi {
 
     @PostMapping(path = "/create")
     ResponseEntity<BaseResponse> createBAnk(@RequestBody CreateBankRequest request);

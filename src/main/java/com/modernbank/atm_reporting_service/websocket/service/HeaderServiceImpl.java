@@ -1,6 +1,6 @@
 package com.modernbank.atm_reporting_service.websocket.service;
 
-import com.modernbank.atm_reporting_service.client.SecurityServiceClient;
+import com.modernbank.atm_reporting_service.api.client.SecurityServiceClient;
 import com.modernbank.atm_reporting_service.constants.HeaderKey;
 import com.modernbank.atm_reporting_service.websocket.service.interfaces.IHeaderService;
 import jakarta.servlet.http.HttpServletRequest;

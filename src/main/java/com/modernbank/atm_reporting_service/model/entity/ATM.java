@@ -34,10 +34,10 @@ public class ATM {
     private String name;
 
     @Column(name = "latitude")
-    private String latitude;
+    private Double latitude;
 
     @Column(name = "longitude")
-    private String longitude;
+    private Double longitude;
 
     @Column(name = "city")
     private String city;
