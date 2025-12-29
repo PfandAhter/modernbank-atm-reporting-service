@@ -11,10 +11,7 @@ import java.util.Set;
 
 
 
-/**
- * ATM entity class representing an ATM machine.
- * This class is used to store information about ATMs in the database.
- */
+
 @Entity
 @Table(name = "atm")
 @Getter

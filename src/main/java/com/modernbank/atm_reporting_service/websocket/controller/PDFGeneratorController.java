@@ -1,6 +1,6 @@
 package com.modernbank.atm_reporting_service.websocket.controller;
 
-import com.modernbank.atm_reporting_service.websocket.controller.api.IPDFGeneratorControllerApi;
+import com.modernbank.atm_reporting_service.api.PDFGeneratorControllerApi;
 import com.modernbank.atm_reporting_service.websocket.controller.api.request.CreatePDFRequest;
 import com.modernbank.atm_reporting_service.websocket.controller.api.response.PDFGeneratorResponse;
 import com.modernbank.atm_reporting_service.websocket.service.event.producer.PDFProducerServiceImpl;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RequestMapping("/api/test")
 @RequiredArgsConstructor
-public class PDFGeneratorController implements IPDFGeneratorControllerApi {
+public class PDFGeneratorController implements PDFGeneratorControllerApi {
 
     private final PDFProducerServiceImpl pdfProducerService;
 
