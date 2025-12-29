@@ -1,0 +1,67 @@
+cache:
+  config:
+    entryTtl: 60
+    pdfList:
+      entryTtl: 30
+
+route:
+  provider: ${ROUTE_PROVIDER} # google or mapbox, haversine
+
+  google:
+    api-key: ${GOOGLE_MAPS_API_KEY}
+    mode: walking
+
+  mapbox:
+    access-token: ${MAPBOX_ACCESS_TOKEN}
+    mode: walking
+
+encryption:
+  pepper: ${ENCRYPTION_PEPPER}
+
+spring:
+  datasource:
+    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME}
+    url: ${DATABASE_URL}
+  jpa:
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: none
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      group-id: pdf-consumer-group
+      auto-offset-reset: earliest
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  cache:
+    type: redis
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      timeout: 5000
+      password: ${REDIS_PASSWORD}
+  application:
+    name: atm-reporting-service
+  main:
+    banner-mode: off
+
+feign:
+  client:
+    notification-service:
+      url: ${NOTIFICATION_SERVICE_URL}/api/v1
+      sendRouteGenerateRequest: /notification/chat/send
+      sendNotificationRequest: /notification/send
+server:
+  port: 8085

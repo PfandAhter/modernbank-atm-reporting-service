@@ -1,0 +1,145 @@
+package com.modernbank.atm_reporting_service.websocket.service.encryption;
+
+import com.modernbank.atm_reporting_service.exceptions.EncryptionException;
+import com.modernbank.atm_reporting_service.websocket.service.interfaces.IPDFEncryptionService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.regex.Pattern;
+
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.ERROR_OCCURRED_WHILE_PDF_ENCRYPTION;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.SECURITY_ERROR_OCCURRED_WHILE_PDF_ENCRYPTION;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.INVALID_ENCRYPTED_DATA_FORMAT;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.ERROR_OCCURRED_WHILE_PDF_DECRYPTION;
+import static com.modernbank.atm_reporting_service.constants.ErrorCodeConstants.PDF_ENCRYPT_PASSWORD_NOT_VALID;
+
+@Service
+@Slf4j
+public class PDFEncryptionServiceImpl implements IPDFEncryptionService {
+
+    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+
+    private static final int ITERATION_COUNT = 65536;
+
+    private static final int KEY_LENGTH = 256;
+
+    private static final int SALT_LENGTH = 32;
+
+    private static final int IV_LENGTH = 16;
+
+    private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+
+    @Value("${encryption.pepper}")
+    private String pepper;
+
+    public record EncryptedData(byte[] data, String salt){
+    }
+
+    @Override
+    public EncryptedData encryptPDF(byte[] pdfContent, String password) {
+        validatePassword(password); // Null, boş veya zayıf parola kontrolü yapılmalı
+
+        try {
+            byte[] salt = generateSalt(); // Rastgele salt oluştur
+            SecretKey key = deriveKey(password, salt); // Paroladan key türet
+
+            Cipher cipher = Cipher.getInstance(ALGORITHM); // AES/GCM gibi bir algoritma olabilir
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] iv = cipher.getIV(); // IV cipher’dan alınmalı
+            byte[] encryptedContent = cipher.doFinal(pdfContent); // PDF şifrelenir
+
+            ByteBuffer byteBuffer = ByteBuffer.allocate(IV_LENGTH + encryptedContent.length);
+            byteBuffer.put(iv);
+            byteBuffer.put(encryptedContent);
+
+            return new EncryptedData(byteBuffer.array(), Base64.getEncoder().encodeToString(salt));
+
+        } catch (GeneralSecurityException e) {
+            log.error("Security error while encrypting PDF", e);
+            throw new EncryptionException(SECURITY_ERROR_OCCURRED_WHILE_PDF_ENCRYPTION);
+
+        } catch (Exception e) {
+            log.error("Unexpected error while encrypting PDF", e);
+            throw new EncryptionException(ERROR_OCCURRED_WHILE_PDF_ENCRYPTION);
+        }
+    }
+
+    @Override
+    public byte[] decryptPDF(byte[] encryptedData,String password, String saltString) throws EncryptionException{
+        validatePassword(password);
+
+        try{
+            byte[] salt = Base64.getDecoder().decode(saltString);
+            SecretKey key = deriveKey(password, salt);
+
+            if(encryptedData.length < IV_LENGTH){
+                throw new EncryptionException(INVALID_ENCRYPTED_DATA_FORMAT);
+            }
+
+            ByteBuffer byteBuffer = ByteBuffer.wrap(encryptedData);
+            byte[] iv = new byte[IV_LENGTH];
+            byteBuffer.get(iv);
+
+            byte[] encryptedContent = new byte[byteBuffer.remaining()];
+            byteBuffer.get(encryptedContent);
+
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+
+            return cipher.doFinal(encryptedContent);
+        }catch (Exception e){
+            log.error("Error while decrypting PDF", e);
+            throw new EncryptionException(ERROR_OCCURRED_WHILE_PDF_DECRYPTION);
+        }
+    }
+
+
+    private SecretKey deriveKey (String password, byte[] salt) throws Exception{
+        String pepperedPassword = password + pepper;
+
+        PBEKeySpec spec = new PBEKeySpec(
+                pepperedPassword.toCharArray(),
+                salt,
+                ITERATION_COUNT,
+                KEY_LENGTH
+        );
+
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        byte[] keyBytes = factory.generateSecret(spec).getEncoded();
+
+        return new SecretKeySpec(keyBytes, "AES");
+    }
+
+    private byte[] generateSalt(){
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[SALT_LENGTH];
+        random.nextBytes(salt);
+
+        return salt;
+    }
+
+    private void validatePassword (String password) throws EncryptionException {
+        if(password == null || password.isEmpty()){
+            throw new EncryptionException();
+        }
+
+        Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+        if (!pattern.matcher(password).matches()) {
+            throw new EncryptionException(PDF_ENCRYPT_PASSWORD_NOT_VALID);
+        }
+    }
+
+
+}

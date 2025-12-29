@@ -2,15 +2,14 @@ package com.modernbank.atm_reporting_service.websocket.controller.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.modernbank.atm_reporting_service.constants.ErrorCodeConstants;
+import com.modernbank.atm_reporting_service.constants.ResponseStatus;
+import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonPropertyOrder({
         "Status",
         "ProcessCode",
